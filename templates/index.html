@@ -1,0 +1,102 @@
+<html>
+	<head>
+	<title>Paper Graph</title>
+	<link rel="stylesheet" type="text/css" href="./static/bootstrap.min.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+  <script src="./static/sigma.min.js"></script>
+  <script src="./static/sigma.parsers.json.min.js"></script>
+
+<style type="text/css">
+  #container {
+    max-width: 100%;
+    height:500px;
+    margin-bottom:20px;
+    margin-top:30px;
+  }
+</style>
+
+	</head>
+
+	<body style="background:#fafafa">
+
+	<div class="container">
+  
+      <div>
+        <h1>Paper Graph</h1>
+        <p class="lead">Search and visualize networks of research. Research, both searched and visualized. </p>
+      </div>
+
+      <div class="row marketing">
+        <div class="col-lg-6 col-md-offset-3">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search for research keywords" autofocus>
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="button">search</button>
+            </span>
+          </div><!-- /input-group -->
+        </div><!-- /.col-lg-6 -->
+      </div>
+      <div class="row">
+        <div class="col-lg-10">
+          <div id="container" style=""></div>
+        </div>
+      </div>
+
+      <footer class="footer" style="padding-top:60px;padding-bottom:20px;">
+        <p>Created by Adam Haifa, Badoi Phan, Josh ..., Kurt ..., at MedHacks 2015.</p>
+      </footer>
+
+    </div> 
+
+
+<script>
+/**
+ * This example shows the available edge label renderers for the canvas
+ * renderer.
+ */
+var i,
+    s,
+    N = 30,
+    E = 50,
+    g = {
+      nodes: [],
+      edges: []
+    };
+// Generate a random graph:
+for (i = 0; i < N; i++)
+  g.nodes.push({
+    id: 'n' + i,
+    label: 'Node ' + i,
+    x: Math.random(),
+    y: Math.random(),
+    size: Math.random(),
+    color: '#f33'
+  });
+for (i = 0; i < E; i++)
+  g.edges.push({
+    id: 'e' + i,
+    label: 'Edge ' + i,
+    source: 'n' + (Math.random() * N | 0),
+    target: 'n' + (Math.random() * N | 0),
+    color: '#f33',
+    type: 'curvedArrow'
+  });
+// Instantiate sigma:
+s = new sigma({
+  graph: g,
+  renderer: {
+    container: document.getElementById('container'),
+    type: 'canvas'
+  },
+  settings: {
+    edgeLabelSize: 'proportional',
+    minArrowSize: '30',
+    defaultLabelColor: '#fff',
+    defaultEdgeType: 'curvedArrow'
+  }
+});
+</script>
+	</body>
+</html>
