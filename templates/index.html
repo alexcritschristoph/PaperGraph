@@ -8,7 +8,7 @@
   <script src="./static/sigma.min.js"></script>
   <script src="./static/sigma.parsers.json.min.js"></script>
   <script src="./static/sigma.layout.forceAtlas2.min.js"></script>
-
+  <link rel="icon" href="./static/Favicon.ico" type="image/x-icon" />
 <style type="text/css">
 body{
   display:none;
@@ -30,8 +30,8 @@ body{
 	<div class="container">
   
       <div>
-        <h1>Paper Graph</h1>
-        <p class="lead">Search and visualize networks of research. Research, both searched and visualized. </p>
+        <h1 style="width:30%; margin:auto;margin-top:20px;"><img src='./static/FullLogo.png' width="370px;"></h1>
+        <p class="lead"> PaperGraph is an experimental visualization tool of peer-reviewed articles in PubMed. A network of papers where edges are defined by high cosine similarity of tf-idf vectors computed from paper abstracts, so that papers with similar research findings will linked together. Search for papers using keywords, and click on the connecting papers to explore more interactive networks. </p>
       </div>
 
       <div class="row marketing">
@@ -46,20 +46,7 @@ body{
       </div>
       <div class="row">
       <div class="col-lg-3" style="padding:0;">
-      <div class="list-group">
-        <a href="#" class="list-group-item">
-          <h4 class="list-group-item-heading" style="font-size:1.3em;">phyloseq: an R package for reproducible interactive analysis and graphics of microbiome census data</h4>
-          <p class="list-group-item-text">PJ McMurdie, S Holmes - 2013 - dx.plos.org</p>
-        </a>
-        <a href="#" class="list-group-item">
-          <h4 class="list-group-item-heading" style="font-size:1.3em;">Localized plasticity in the streamlined genomes of vinyl chloride respiring Dehalococcoides</h4>
-          <p class="list-group-item-text">PJ McMurdie, SF Behrens, JA Müller, J Göke… - PLoS Genet, 2009 - dx.plos.org</p>
-        </a>
-        <a href="#" class="list-group-item">
-          <h4 class="list-group-item-heading" style="font-size:1.3em;">Waste not, want not: why rarefying microbiome data is inadmissible</h4>
-          <p class="list-group-item-text">PJ McMurdie, S Holmes - PLoS Comput Biol, 2014 - dx.plos.org</p>
-        </a>
-
+      <div class="list-group" id="side_list">
       </div>
       </div>
         <div class="col-lg-8">
@@ -85,9 +72,6 @@ $( document ).ready(function() {
     $("#search").trigger("enterKey");
   });
 
-  function onClick(event) {
-      alert("on click");
-  } 
 
  /** HANDLES SEARCHING **/
 
@@ -158,9 +142,12 @@ $( document ).ready(function() {
 
       s.bind('clickNode', function(e) {
           var str1 = e.data.node.label;
-          var str2 = str1.replace(/(([^\s]+\s\s*){3})(.*)/,"$1");
+          var str2 = str1.replace(/(([^\s]+\s\s*){5})(.*)/,"$1");
           $("#search").val(str2);
           $("#search").trigger("enterKey");
+          var node_id = e.data.node.id;
+          
+          $('<a href="http://www.ncbi.nlm.nih.gov/pubmed/' + node_id + '" target="_blank" class="list-group-item"><h4 class="list-group-item-heading" style="font-size:1.3em;">' +results['nodes'][node_id]['title'] + '</h4><p class="list-group-item-text">' + results['nodes'][node_id]['year'] + ". " + results['nodes'][node_id]['journal'] +  '</p></a>').hide().prependTo("#side_list").fadeIn("fast");
       });
 
 

@@ -9,9 +9,13 @@ from xml.dom import minidom
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 from sets import Set
-
+import os
+import signal
+import sys
+from math import log
 
 app = Flask(__name__)
+
 
 @app.route("/")
 def main_page():
@@ -26,7 +30,7 @@ def search_graph():
 	file_name = str(uuid.uuid4()) + ".dat"
 
 	command = "esearch -query '"+ query +"' -db pubmed | efetch -format Abstract -mode xml "
-	process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+	process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)
 
 	bytes = lines = 0
 	result = ''
@@ -34,12 +38,21 @@ def search_graph():
 		lines += 1
 		result += line
 		if lines > 2200 and '</PubmedArticle>' in line:
+			os.killpg(process.pid, signal.SIGTERM)
 			break
 
-	result += "</PubmedArticleSet>"
+	print result.count("PubmedArticleSet")
+	if result.count("PubmedArticleSet") % 2 == 0:
+		result += "</PubmedArticleSet>"
+	result = result.replace("&", '')
 	#Parse results of esearch command
 	print "****1***"
-	xmldoc = minidom.parseString(result)
+	try:
+		xmldoc = minidom.parseString(result)
+	except Exception as e:
+		print result.split("\n")[-1]
+		print result.split("\n")[-2]
+		print e.message
 	print "****2***"
 	itemlist = xmldoc.getElementsByTagName('PubmedArticle')
 	print "****3***"
@@ -57,10 +70,14 @@ def search_graph():
 		print "found title"
 		titles.append(title)
 
-		Abstract = s.getElementsByTagName('AbstractText')
-		Abstract = Abstract[0].toprettyxml().split(">")[1].split("<")[0]
-		abstracts.append(Abstract)
-		print "found abstract"
+		try:
+			Abstract = s.getElementsByTagName('AbstractText')
+			Abstract = Abstract[0].toprettyxml().split(">")[1].split("<")[0]
+			abstracts.append(Abstract)
+			print "found abstract"
+		except:
+			Abstract = ''
+			abstracts.append(Abstract)
 
 		pmid = s.getElementsByTagName('PMID')
 		pmid = pmid[0].toprettyxml().split(">")[1].split("<")[0]
@@ -78,6 +95,7 @@ def search_graph():
 		year = year[0].toprettyxml().split(">")[1].split("<")[0]
 		years.append(year)
 		print "found year"
+
 	# Create Objects
 	papers = {}
 	i = 0
