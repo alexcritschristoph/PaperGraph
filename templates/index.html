@@ -141,8 +141,9 @@ $( document ).ready(function() {
     });
 
       s.bind('clickNode', function(e) {
-          var str1 = e.data.node.label;
-          var str2 = str1.replace(/(([^\s]+\s\s*){5})(.*)/,"$1");
+          var str1 = e.data.node.id;
+          var str2 = results['nodes'][str1]['imp_words']
+          //var str2 = str1.replace(/(([^\s]+\s\s*){5})(.*)/,"$1");
           $("#search").val(str2);
           $("#search").trigger("enterKey");
           var node_id = e.data.node.id;

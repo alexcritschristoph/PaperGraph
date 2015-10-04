@@ -13,10 +13,10 @@ import os
 import signal
 import sys
 from math import log
-
+from textblob import TextBlob
 app = Flask(__name__)
 
-
+test = TextBlob("hi")
 @app.route("/")
 def main_page():
     return render_template('index.html')
@@ -50,8 +50,6 @@ def search_graph():
 	try:
 		xmldoc = minidom.parseString(result)
 	except Exception as e:
-		print result.split("\n")[-1]
-		print result.split("\n")[-2]
 		print e.message
 	print "****2***"
 	itemlist = xmldoc.getElementsByTagName('PubmedArticle')
@@ -59,6 +57,7 @@ def search_graph():
 	years = []
 	titles = []
 	abstracts = []
+	imp_words = []
 	pmids = []
 	journals = []
 	print "****4***"
@@ -69,6 +68,7 @@ def search_graph():
 		title = title[0].toprettyxml().split(">")[1].split("<")[0]
 		print "found title"
 		titles.append(title)
+		imp_words.append(' '.join(' '.join(list(TextBlob(title).noun_phrases)[0:4]).split(' ')[0:4]))
 
 		try:
 			Abstract = s.getElementsByTagName('AbstractText')
@@ -107,6 +107,7 @@ def search_graph():
 		papers[paper]['journal'] = journals[i]
 		papers[paper]['abstract'] = abstracts[i]
 		papers[paper]['pmid'] = pmids[i]
+		papers[paper]['imp_words'] = imp_words[i]
 		i+= 1
 
 	vect = TfidfVectorizer(min_df=1)
