@@ -33,7 +33,7 @@ def search_graph():
 	for line in process.stdout:
 		lines += 1
 		result += line
-		if lines > 2000 and '</PubmedArticle>' in line:
+		if lines > 2200 and '</PubmedArticle>' in line:
 			break
 
 	result += "</PubmedArticleSet>"

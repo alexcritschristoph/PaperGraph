@@ -82,8 +82,12 @@ $( document ).ready(function() {
   $("#search").focus();
 
   $("#search_btn").bind("click", function(e){
-
+    $("#search").trigger("enterKey");
   });
+
+  function onClick(event) {
+      alert("on click");
+  } 
 
  /** HANDLES SEARCHING **/
 
@@ -112,10 +116,11 @@ $( document ).ready(function() {
     // Generate a random graph:
     for (i = 0; i < Object.keys(results['nodes']).length; i++)
     {
-
+      var str1 = results['nodes'][Object.keys(results['nodes'])[i]]['title'];
+          var str2 = str1.replace(/(([^\s]+\s\s*){5})(.*)/,"$1…");
       g.nodes.push({
         id: Object.keys(results['nodes'])[i],
-        label: results['nodes'][Object.keys(results['nodes'])[i]]['title'],
+        label: str2,
         x: Math.random(),
         y: Math.random(),
         size: 40,
@@ -151,6 +156,14 @@ $( document ).ready(function() {
       }
     });
 
+      s.bind('clickNode', function(e) {
+          var str1 = e.data.node.label;
+          var str2 = str1.replace(/(([^\s]+\s\s*){3})(.*)/,"$1");
+          $("#search").val(str2);
+          $("#search").trigger("enterKey");
+      });
+
+
         }
   });
 
@@ -172,51 +185,6 @@ $( document ).ready(function() {
 
 
 
-/**
- * This example shows the available edge label renderers for the canvas
- * renderer.
- */
-var i,
-    s,
-    N = 30,
-    E = 50,
-    g = {
-      nodes: [],
-      edges: []
-    };
-// Generate a random graph:
-for (i = 0; i < N; i++)
-  g.nodes.push({
-    id: 'n' + i,
-    label: 'Node ' + i,
-    x: Math.random(),
-    y: Math.random(),
-    size: 40,
-    color: '#f33'
-  });
-for (i = 0; i < E; i++)
-  g.edges.push({
-    id: 'e' + i,
-    label: 'Edge ' + i,
-    source: 'n' + (Math.random() * N | 0),
-    target: 'n' + (Math.random() * N | 0),
-    color: '#f33',
-    type: 'curvedArrow'
-  });
-// Instantiate sigma:
-s = new sigma({
-  graph: g,
-  renderer: {
-    container: document.getElementById('container'),
-    type: 'canvas'
-  },
-  settings: {
-    edgeLabelSize: 'proportional',
-    minArrowSize: '30',
-    defaultLabelColor: 'black',
-    defaultEdgeType: 'curvedArrow'
-  }
-});
 
 });
 
