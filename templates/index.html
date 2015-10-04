@@ -7,6 +7,7 @@
 
   <script src="./static/sigma.min.js"></script>
   <script src="./static/sigma.parsers.json.min.js"></script>
+  <script src="./static/sigma.layout.forceAtlas2.min.js"></script>
 
 <style type="text/css">
 body{
@@ -89,7 +90,7 @@ $( document ).ready(function() {
   $('#search').bind("enterKey",function(e){
  $(this).blur();
  $(this).parent().find("button").html('<div class="pulse-loader"></div>');
-
+ var search_btn = $(this).parent().find("button");
    //Alright, run AJAX command
    $.ajax({
         method: 'POST',
@@ -97,7 +98,59 @@ $( document ).ready(function() {
         url: '/search',
         dataType: 'json',
         success: function(results) {
-          alert(results['results']);
+          console.log(results);
+          search_btn.html("search");
+
+          var i,
+    s,
+    N =  Object.keys(results['nodes']).length,
+    E = 50,
+    g = {
+      nodes: [],
+      edges: []
+    };
+    // Generate a random graph:
+    for (i = 0; i < Object.keys(results['nodes']).length; i++)
+    {
+
+      g.nodes.push({
+        id: Object.keys(results['nodes'])[i],
+        label: results['nodes'][Object.keys(results['nodes'])[i]]['title'],
+        x: Math.random(),
+        y: Math.random(),
+        size: 40,
+        color: '#f33'
+      });
+    }
+      
+    for (i = 0; i <  results['links'].length; i++)
+    {
+      g.edges.push({
+        id: 'e' + i,
+        label: 'Edge ' + i,
+        source: results['links'][i][0],
+        target: results['links'][i][1],
+        color: '#f33',
+        type: 'curvedArrow'
+      });      
+    }
+
+    // Instantiate sigma:
+    $("#container").html('');
+    s = new sigma({
+      graph: g,
+      renderer: {
+        container: document.getElementById('container'),
+        type: 'canvas'
+      },
+      settings: {
+        edgeLabelSize: 'proportional',
+        minArrowSize: '30',
+        defaultLabelColor: 'black',
+        defaultEdgeType: 'curvedArrow'
+      }
+    });
+
         }
   });
 
